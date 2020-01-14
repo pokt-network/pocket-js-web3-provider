@@ -1,0 +1,77 @@
+{
+  "name": "pocket-js-web3-provider",
+  "version": "0.1.0",
+  "engine": {
+    "node": ">= 11.6.0"
+  },
+  "description": "Pocket JavaScript Web3 Provider",
+  "license": "MIT",
+  "main": "index.js",
+  "directories": {
+    "tests": "./tests"
+  },
+  "scripts": {
+    "test": "mocha --require ts-node/register tests/**/*.ts",
+    "build": "npm run format & npm run lint & tsc",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pokt-network/pocket-js-web3-provider.git"
+  },
+  "keywords": [
+    "Pocket",
+    "Network",
+    "SDK",
+    "Web3",
+    "Provider",
+    "JavaScript",
+    "TypeScript",
+    "Blockchain",
+    "Tool"
+  ],
+  "author": "Pocket Network",
+  "authors": [{
+      "name": "Pabel Nunez Landestoy",
+      "email": "pabel@pokt.network",
+      "homepage": "https://github.com/pabelnl"
+    },
+    {
+      "name": "Luis C. de León",
+      "email": "luis@pokt.network",
+      "homepage": "https://github.com/luyzdeleon"
+    },
+    {
+      "name": "Wilson Garcia",
+      "email": "wilson@pokt.network",
+      "homepage": "https://github.com/wgarcia4190"
+    },
+    {
+      "name": "Alex Firmani",
+      "email": "alex@pokt.network",
+      "homepage": "https://github.com/nymd"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/pokt-network/pocket-js-web3-provider/issues"
+  },
+  "homepage": "https://github.com/pokt-network/pocket-js-web3-provider#readme",
+  "dependencies": {
+    "@types/aes-js": "^3.1.0",
+    "aes-js": "^3.1.2",
+    "axios": "^0.18.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.7",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.12.17",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.2",
+    "prettier": "^1.19.1",
+    "ts-node": "^8.5.4",
+    "tslint": "^5.20.1",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.7.2"
+  }
+}

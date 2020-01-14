@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+      /* Basic Options */
+      "target": "es5",
+      "module": "commonjs",
+      "sourceMap": true,
+      "outDir": "./dist",
+      "strict": true,
+      "alwaysStrict": true,
+      "lib": ["es5", "es6", "dom"],
+      "downlevelIteration": true,
+      "resolveJsonModule": true
+    },
+    "exclude": ["node_modules", "**/__tests__/*"]
+  }
