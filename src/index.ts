@@ -3,21 +3,21 @@ import {
   Configuration,
   RelayResponse,
   RpcErrorResponse,
-  RelayPayload,
   RelayHeaders,
   RelayRequest,
   typeGuard
 } from "pocket-js-core"
 import { TransactionSigner } from "./transaction-signer"
+import {AbstractSocketProvider} from 'web3-providers';
+
 /**
  * Pocket Web3 Provider
  * Sends Relays to a service node in the Pocket Network
  * @param {string} activeBlockchain - Blockchain hash.
  * @param {Configuration} configuration - Pocket Configuration.
- * @param {Configuration} optionalConfiguration - (optional)  Pocket alternate Configuration.
  * @param {TransactionSigner} transactionSigner - (optional) Transaction signer object.
  */
-export class PocketProvider {
+export class PocketProvider extends AbstractSocketProvider {
   public readonly pocket: Pocket
   public readonly transactionSigner?: TransactionSigner
   public activeBlockchain: string
@@ -26,10 +26,11 @@ export class PocketProvider {
   constructor(
     activeBlockchain: string,
     configuration: Configuration,
-    optionalConfiguration?: Configuration,
     transactionSigner?: TransactionSigner
   ) {
-    this.pocket = new Pocket(configuration, optionalConfiguration)
+    super(undefined, 40000)
+
+    this.pocket = new Pocket(configuration)
     this.activeBlockchain = activeBlockchain
     this.transactionSigner = transactionSigner
   }
@@ -105,7 +106,7 @@ export class PocketProvider {
     })
 
     const result = await this.send(data)
-    
+
     if (typeGuard(result, RpcErrorResponse)) {
       return result
     }
