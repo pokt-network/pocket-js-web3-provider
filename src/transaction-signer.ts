@@ -1,14 +1,18 @@
-
 export class TransactionSigner {
-    public readonly accounts: string[]
-    public readonly privateKeys: {value: string}
-    public readonly hasAddress: Function
-    public readonly signTransaction: Function
+  public readonly accounts: string[]
+  public readonly privateKeys: string[]
+  public readonly hasAddress: (address: string) => Promise<boolean>
+  public readonly signTransaction: (txParams: {}) => Promise<string>
 
-    constructor(accounts: string[], privateKeys: {value: string}, hasAddress: Function, signTransaction: Function) {
-        this.accounts = accounts
-        this.privateKeys = privateKeys
-        this.hasAddress = hasAddress
-        this.signTransaction = signTransaction
-    }
+  constructor(
+    accounts: string[],
+    privateKeys: string[],
+    hasAddress: (address: string) => Promise<boolean>,
+    signTransaction: (txParams: {}) => Promise<string>
+  ) {
+    this.accounts = accounts
+    this.privateKeys = privateKeys
+    this.hasAddress = hasAddress
+    this.signTransaction = signTransaction
+  }
 }
