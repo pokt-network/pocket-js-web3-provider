@@ -6,7 +6,9 @@
         "prefer-for-of": false,
         "no-console": false,
         "no-namespace": false,
-        "semicolon": [true, "never"]
+        "semicolon": [true, "never"],
+        "only-arrow-functions": false,
+        "object-shorthand": false
     }
  }
  
