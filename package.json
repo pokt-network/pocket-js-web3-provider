@@ -12,7 +12,7 @@
   },
   "scripts": {
     "test": "mocha --require ts-node/register tests/**/*.ts",
-    "build": "npm run format & npm run lint & tsc",
+    "build": "npm run lint & tsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json"
   },
