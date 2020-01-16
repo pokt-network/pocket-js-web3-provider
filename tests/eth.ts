@@ -7,9 +7,10 @@ import { PocketProvider } from "../src/index"
 import { TransactionSigner } from "../src/transaction-signer"
 import { Transaction } from "ethereumjs-tx"
 import { numberToHex } from "web3-utils"
-import { Configuration, RelayHeaders, typeGuard, RpcErrorResponse } from "pocket-js-core"
+import { Configuration, RpcErrorResponse } from "pocket-js-core"
 import { PocketAAT } from "pocket-aat-js"
-
+import Web3 from 'web3'
+import { TransactionConfig } from 'web3-core'
 
 // Ethereum data setup for test
 const ethTxSigner = {
@@ -39,42 +40,31 @@ const configuration = new Configuration([blockchain], pocketAAT, 5, 40000, true)
 
 describe('Ethereum PocketProvider', function () {
 
-    const provider = new PocketProvider(blockchain, configuration, undefined, ethTransactionSigner)
+    const provider = new PocketProvider(blockchain, configuration, ethTransactionSigner)
 
     it('should create a new instance of the PocketProvider', function () {
-        const pocketProvider = new PocketProvider(blockchain, configuration, undefined, ethTransactionSigner)
+        const pocketProvider = new PocketProvider(blockchain, configuration, ethTransactionSigner)
 
         expect(pocketProvider).to.be.an.instanceof(PocketProvider)
     })
 
     it('should send a new request', async () => {
-        const data = JSON.stringify({
-            "id": (new Date()).getTime(),
-            "jsonrpc": "2.0",
-            "method": "eth_getBalance",
-            "params": [ethTransactionSigner.accounts[0], "latest"],
-        })
-        const relayHeaders: RelayHeaders = {[""]: ""}
-
-        const relay = await provider.pocket.createRelayRequest(data,
-            blockchain,
-            relayHeaders,
-            undefined,
-            true,
-            undefined,
-            undefined
-        )
-        if (typeGuard(relay, RpcErrorResponse)) {
-            throw new Error('Expected relay to be of type RelayRequest')
-        }
-        expect(relay).to.be.a('RelayRequest')
-        const response = await provider.send(relay)
-        expect(response).to.not.be.an.instanceof(Error)
+        // Instantiate the Web3 client with the Pocket Provider
+        const web3Client = new Web3(provider)
+        expect(web3Client).to.be.an.instanceof(Web3)
+        expect(web3Client.currentProvider).to.not.be.undefined
+        // Retrieve the balance of one of the accounts
+        const response = await web3Client.eth.getBalance(ethTransactionSigner.accounts[0])
+        expect(response).to.not.be.an.instanceof(RpcErrorResponse)
     })
 
     it('should submit transactions using eth_sendTransaction', async () => {
+        // Instantiate the Web3 client with the Pocket Provider
+        const web3Client = new Web3(provider)
+        expect(web3Client).to.be.an.instanceof(Web3)
+        expect(web3Client.currentProvider).to.not.be.undefined
         // Transfers eth from accounts[0] to accounts[1]
-        const tx = {
+        const tx: TransactionConfig = {
             "from": ethTransactionSigner.accounts[0],
             "gas": "0x5208",
             "gasPrice": "0x3B9ACA00",
@@ -82,29 +72,7 @@ describe('Ethereum PocketProvider', function () {
             "value": numberToHex(10000), // Change value for the amount being sent
         }
 
-        const data = JSON.stringify({
-            "id": (new Date()).getTime(),
-            "jsonrpc": "2.0",
-            "method": "eth_sendTransaction",
-            "params": [tx]
-        })
-        
-        const relayHeaders: RelayHeaders = {[""]: ""}
-
-        const relay = await provider.pocket.createRelayRequest(data,
-            blockchain,
-            relayHeaders,
-            undefined,
-            true,
-            undefined,
-            undefined
-        )
-        if (typeGuard(relay, RpcErrorResponse)) {
-            throw new Error('Expected relay to be of type RelayRequest')
-        }
-
-        const response = await provider.send(relay)
-        expect(relay).to.be.a('RelayRequest')
-        expect(response).to.not.be.an.instanceof(Error)
+        const response = await web3Client.eth.sendTransaction(tx)
+        expect(response).to.not.be.an.instanceof(RpcErrorResponse)
     })
 })
