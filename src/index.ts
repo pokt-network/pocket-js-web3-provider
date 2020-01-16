@@ -40,7 +40,7 @@ export class PocketProvider {
    * @returns {RelayResponse} - Relay response object.
    * @memberof PocketProvider
    */
-  public async send(relay: RelayRequest): Promise<RelayResponse | RpcErrorResponse> {
+  public async send(payload: {}): Promise<RelayResponse | RpcErrorResponse> {
     // Check for the pocket instance
     if (!typeGuard(this.pocket, Pocket)) {
       return new RpcErrorResponse(
@@ -50,11 +50,28 @@ export class PocketProvider {
     }
 
     // Check the relay request
-    const relayRequest = await this._generateRelayData(relay)
+    const relayData = await this._generateRelayData(payload)
+
+    if (typeGuard(relayData, RpcErrorResponse)) {
+      return relayData
+    }
+
+    const relayHeaders: RelayHeaders = { [""]: "" }
+
+    const relayRequest = await this.pocket.createRelayRequest(
+      JSON.stringify(relayData),
+      this.activeBlockchain,
+      relayHeaders,
+      undefined,
+      true,
+      undefined,
+      undefined
+    )
 
     if (!typeGuard(relayRequest, RelayRequest)) {
       return relayRequest
     }
+
     try {
       // Send relay to the network
       const result = await this.pocket.sendRelay(relayRequest)
@@ -79,52 +96,41 @@ export class PocketProvider {
    */
   private async _getNonce(
     sender: string
-  ): Promise<RelayResponse | RpcErrorResponse> {
+  ): Promise<any | RpcErrorResponse> {
     const data = JSON.stringify({
       "id": new Date().getTime(),
       "jsonrpc": "2.0",
       "method": "eth_getTransactionCount",
       "params": [sender, "latest"]
     })
-    const relayHeaders: RelayHeaders = { [""]: "" }
 
-    const relayRequest = await this.pocket.createRelayRequest(
-      data,
-      this.activeBlockchain,
-      relayHeaders,
-      undefined,
-      true,
-      undefined,
-      undefined
-    )
-
-    if (!typeGuard(relayRequest, RelayRequest)) {
-      return relayRequest
+    const result = await this.send(data)
+    
+    if (typeGuard(result, RpcErrorResponse)) {
+      return result
     }
 
-    const response = await this.send(relayRequest)
-
-    return response
+    return result
   }
 
   /**
    * Method to generate the relay data according to the given JSON-RPC payload
    * @method _generateRelayData
-   * @param {RelayRequest} relay - Provided relay request.
-   * @returns {RelayRequest} - Relay request.
+   * @param {any} relay - Provided relay payload object.
+   * @returns {any} - Relay request data object.
    * @memberof PocketProvider
    */
   private async _generateRelayData(
-    relay: RelayRequest
-  ): Promise<RelayRequest | RpcErrorResponse> {
+    payload: any = {}
+  ): Promise<any | RpcErrorResponse> {
     // Retrieve method from payload
-    const method = JSON.parse(relay.payload.data).method
+    const method = payload.method
     // Check rpc method
-    if (method === "eth_sendTransaction") {
-      const relayRequest = await this._parseRelayParams(relay.payload)
-      return relayRequest
+    if (method !== undefined && method === "eth_sendTransaction") {
+      const relayData = await this._parseRelayParams(payload)
+      return relayData
     } else {
-      return relay
+      return payload
     }
   }
 
@@ -136,10 +142,10 @@ export class PocketProvider {
    * @memberof PocketProvider
    */
   private async _parseRelayParams(
-    payload: RelayPayload
-  ): Promise<RelayRequest | RpcErrorResponse> {
-    const txParams = JSON.parse(payload.data).params
-    const sender = JSON.parse(payload.data).from
+    payload: any = {}
+  ): Promise<any | RpcErrorResponse> {
+    const txParams = payload.params
+    const sender = payload.from
 
     // Verify address exists in the TransactionSigner
     if (this.transactionSigner === undefined) {
@@ -168,25 +174,13 @@ export class PocketProvider {
       return signedTx
     }
     // Create relay data object
-    const relayData = JSON.stringify({
+    const relayData = {
       "id": new Date().getTime(),
       "jsonrpc": "2.0",
       "method": "eth_sendRawTransaction",
       "params": [signedTx]
-    })
+    }
 
-    const relayHeaders: RelayHeaders = { [""]: "" }
-
-    const relayRequest = await this.pocket.createRelayRequest(
-      relayData,
-      this.activeBlockchain,
-      relayHeaders,
-      undefined,
-      true,
-      undefined,
-      undefined
-    )
-
-    return relayRequest
+    return relayData
   }
 }
