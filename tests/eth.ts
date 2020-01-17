@@ -9,7 +9,8 @@ import { Transaction } from "ethereumjs-tx"
 import { numberToHex } from "web3-utils"
 import { Configuration, RpcErrorResponse } from "pocket-js-core"
 import { PocketAAT } from "pocket-aat-js"
-import Web3 from 'web3'
+// To test with Web3 2.x use 'web3-2.x' and for Web3 1.x use 'web3-1.x'
+import Web3 from 'web3-2.x'
 import { TransactionConfig } from 'web3-core'
 
 // Ethereum data setup for test
@@ -52,7 +53,6 @@ describe('Ethereum PocketProvider', function () {
         // Instantiate the Web3 client with the Pocket Provider
         const web3Client = new Web3(provider)
         expect(web3Client).to.be.an.instanceof(Web3)
-        expect(web3Client.currentProvider).to.not.be.undefined
         // Retrieve the balance of one of the accounts
         const response = await web3Client.eth.getBalance(ethTransactionSigner.accounts[0])
         expect(response).to.not.be.an.instanceof(RpcErrorResponse)
@@ -62,7 +62,6 @@ describe('Ethereum PocketProvider', function () {
         // Instantiate the Web3 client with the Pocket Provider
         const web3Client = new Web3(provider)
         expect(web3Client).to.be.an.instanceof(Web3)
-        expect(web3Client.currentProvider).to.not.be.undefined
         // Transfers eth from accounts[0] to accounts[1]
         const tx: TransactionConfig = {
             "from": ethTransactionSigner.accounts[0],

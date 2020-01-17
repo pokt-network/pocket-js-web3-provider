@@ -1,14 +1,13 @@
 import {
   Pocket,
   Configuration,
-  RelayResponse,
   RpcErrorResponse,
   RelayHeaders,
   RelayRequest,
   typeGuard
 } from "pocket-js-core"
 import { TransactionSigner } from "./transaction-signer"
-import {AbstractSocketProvider} from 'web3-providers';
+import {HttpProvider, HttpProviderOptions} from 'web3-providers-2.x'
 
 /**
  * Pocket Web3 Provider
@@ -17,7 +16,7 @@ import {AbstractSocketProvider} from 'web3-providers';
  * @param {Configuration} configuration - Pocket Configuration.
  * @param {TransactionSigner} transactionSigner - (optional) Transaction signer object.
  */
-export class PocketProvider extends AbstractSocketProvider {
+export class PocketProvider extends HttpProvider {
   public readonly pocket: Pocket
   public readonly transactionSigner?: TransactionSigner
   public activeBlockchain: string
@@ -26,13 +25,22 @@ export class PocketProvider extends AbstractSocketProvider {
   constructor(
     activeBlockchain: string,
     configuration: Configuration,
-    transactionSigner?: TransactionSigner
+    transactionSigner?: TransactionSigner,
+    host: string = "",
+    timeout: HttpProviderOptions = { timeout: 10000}
   ) {
-    super(undefined, 40000)
+    super(host, timeout)
 
     this.pocket = new Pocket(configuration)
     this.activeBlockchain = activeBlockchain
     this.transactionSigner = transactionSigner
+    // Check for the pocket instance
+    if (!typeGuard(this.pocket, Pocket)) {
+      throw new RpcErrorResponse(
+        "101",
+        "Unable to retrieve the Pocket instance, verify if is properly instatiated."
+      )
+    }
   }
   /**
    *
@@ -41,20 +49,12 @@ export class PocketProvider extends AbstractSocketProvider {
    * @returns {RelayResponse} - Relay response object.
    * @memberof PocketProvider
    */
-  public async send(payload: {}): Promise<RelayResponse | RpcErrorResponse> {
-    // Check for the pocket instance
-    if (!typeGuard(this.pocket, Pocket)) {
-      return new RpcErrorResponse(
-        "101",
-        "Unable to retrieve the Pocket instance, verify if is properly instatiated."
-      )
-    }
-
+  public async send(payload: {}): Promise<{}> {
     // Check the relay request
     const relayData = await this._generateRelayData(payload)
 
     if (typeGuard(relayData, RpcErrorResponse)) {
-      return relayData
+      throw new Error(relayData.message) 
     }
 
     const relayHeaders: RelayHeaders = { [""]: "" }
@@ -70,22 +70,22 @@ export class PocketProvider extends AbstractSocketProvider {
     )
 
     if (!typeGuard(relayRequest, RelayRequest)) {
-      return relayRequest
+      throw new Error(relayRequest.message) 
     }
 
     try {
       // Send relay to the network
       const result = await this.pocket.sendRelay(relayRequest)
       // Handle the result
-      if (!typeGuard(result, RelayResponse)) {
+      if (typeGuard(result, RpcErrorResponse)) {
         this.isConnected = false
-        return result
+        throw new Error(result.message)
       } else {
-        return result
+        return JSON.parse(result.response)
       }
     } catch (error) {
       this.isConnected = false
-      return error
+      throw error
     }
   }
   /**
@@ -97,21 +97,23 @@ export class PocketProvider extends AbstractSocketProvider {
    */
   private async _getNonce(
     sender: string
-  ): Promise<any | RpcErrorResponse> {
+  ): Promise<{} | RpcErrorResponse> {
     const data = JSON.stringify({
       "id": new Date().getTime(),
       "jsonrpc": "2.0",
       "method": "eth_getTransactionCount",
       "params": [sender, "latest"]
     })
+    try {
+      const result = await this.send(data)
 
-    const result = await this.send(data)
-
-    if (typeGuard(result, RpcErrorResponse)) {
+      if (typeGuard(result, RpcErrorResponse)) {
+        return result
+      }
       return result
+    } catch (error) {
+      return new RpcErrorResponse("101", error)
     }
-
-    return result
   }
 
   /**
