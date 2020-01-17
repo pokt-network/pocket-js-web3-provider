@@ -34,13 +34,6 @@ export class PocketProvider extends HttpProvider {
     this.pocket = new Pocket(configuration)
     this.activeBlockchain = activeBlockchain
     this.transactionSigner = transactionSigner
-    // Check for the pocket instance
-    if (!typeGuard(this.pocket, Pocket)) {
-      throw new RpcErrorResponse(
-        "101",
-        "Unable to retrieve the Pocket instance, verify if is properly instatiated."
-      )
-    }
   }
   /**
    *
