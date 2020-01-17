@@ -1,0 +1,87 @@
+{
+  "name": "pocket-js-web3-provider",
+  "version": "0.1.0",
+  "engine": {
+    "node": ">= 11.6.0"
+  },
+  "description": "Pocket JavaScript Web3 Provider",
+  "license": "MIT",
+  "main": "index.js",
+  "directories": {
+    "tests": "./tests"
+  },
+  "scripts": {
+    "test": "mocha --require ts-node/register tests/**/*.ts",
+    "build": "npm run lint & tsc",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pokt-network/pocket-js-web3-provider.git"
+  },
+  "keywords": [
+    "Pocket",
+    "Network",
+    "SDK",
+    "Web3",
+    "Provider",
+    "JavaScript",
+    "TypeScript",
+    "Blockchain",
+    "Tool"
+  ],
+  "author": "Pocket Network",
+  "authors": [
+    {
+      "name": "Pabel Nunez Landestoy",
+      "email": "pabel@pokt.network",
+      "homepage": "https://github.com/pabelnl"
+    },
+    {
+      "name": "Luis C. de León",
+      "email": "luis@pokt.network",
+      "homepage": "https://github.com/luyzdeleon"
+    },
+    {
+      "name": "Wilson Garcia",
+      "email": "wilson@pokt.network",
+      "homepage": "https://github.com/wgarcia4190"
+    },
+    {
+      "name": "Alex Firmani",
+      "email": "alex@pokt.network",
+      "homepage": "https://github.com/nymd"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/pokt-network/pocket-js-web3-provider/issues"
+  },
+  "homepage": "https://github.com/pokt-network/pocket-js-web3-provider#readme",
+  "dependencies": {
+    "@types/aes-js": "^3.1.0",
+    "aes-js": "^3.1.2",
+    "axios": "^0.18.1",
+    "pocket-js-core": "pokt-network/pocket-js#staging",
+    "pocket-aat-js": "pokt-network/pocket-aat-js#staging",
+    "web3-providers-1.x": "npm:web3-providers@1.0.0-beta.55",
+    "web3-providers-2.x": "npm:web3-providers@^2.0.0-alpha.1",
+    "web3-utils": "^1.2.4",
+    "web3-1.x": "npm:web3@1.2.2",
+    "web3-2.x": "npm:web3@^2.0.0-alpha.1",
+    "@types/web3": "^1.2.2"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.7",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.12.17",
+    "chai": "^4.2.0",
+    "ethereumjs-tx": "^2.1.2",
+    "mocha": "^6.2.2",
+    "prettier": "^1.19.1",
+    "ts-node": "^8.5.4",
+    "tslint": "^5.20.1",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.7.2"
+  }
+}
