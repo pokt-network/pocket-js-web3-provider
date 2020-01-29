@@ -6,13 +6,16 @@
   },
   "description": "Pocket JavaScript Web3 Provider",
   "license": "MIT",
-  "main": "index.js",
+  "main": "lib/src/index.js",
+  "types": "lib/src/index.d.ts",
   "directories": {
     "tests": "./tests"
   },
   "scripts": {
-    "test": "mocha --require ts-node/register tests/**/*.ts",
-    "build": "npm run lint & tsc",
+    "test": "mocha --require ts-node/register tests/src/*.ts",
+    "build": "rm -r lib & cti create ./src & npm run lint & tsc",
+    "prepare": "rm -r lib & cti create ./src & npm run lint & tsc",
+    "prepackage": "rm -r lib & cti create ./src & npm run lint & tsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json"
   },
@@ -59,11 +62,7 @@
   },
   "homepage": "https://github.com/pokt-network/pocket-js-web3-provider#readme",
   "dependencies": {
-    "@types/aes-js": "^3.1.0",
-    "aes-js": "^3.1.2",
-    "axios": "^0.18.1",
-    "pocket-js-core": "pokt-network/pocket-js#staging",
-    "pocket-aat-js": "pokt-network/pocket-aat-js#staging",
+    "pocket-js-core": "github:pokt-network/pocket-js#staging",
     "web3-providers-1.x": "npm:web3-providers@1.0.0-beta.55",
     "web3-providers-2.x": "npm:web3-providers@^2.0.0-alpha.1",
     "web3-utils": "^1.2.4",
@@ -77,6 +76,8 @@
     "@types/node": "^12.12.17",
     "chai": "^4.2.0",
     "ethereumjs-tx": "^2.1.2",
+    "create-ts-index": "^1.12.0",
+    "nock": "^11.7.2",
     "mocha": "^6.2.2",
     "prettier": "^1.19.1",
     "ts-node": "^8.5.4",
