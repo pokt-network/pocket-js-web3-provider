@@ -6,18 +6,12 @@
   },
   "description": "Pocket JavaScript Web3 Provider",
   "license": "MIT",
-  "main": "lib/src/index.js",
-  "types": "lib/src/index.d.ts",
+  "main": "src/index.js",
   "directories": {
     "tests": "./tests"
   },
   "scripts": {
-    "test": "mocha --require ts-node/register tests/src/*.ts",
-    "build": "rm -r lib & cti create ./src & npm run lint & tsc",
-    "prepare": "rm -r lib & cti create ./src & npm run lint & tsc",
-    "prepackage": "rm -r lib & cti create ./src & npm run lint & tsc",
-    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
-    "lint": "tslint -p tsconfig.json"
+    "test": "mocha tests/src/*.js"
   },
   "repository": {
     "type": "git",
@@ -30,7 +24,6 @@
     "Web3",
     "Provider",
     "JavaScript",
-    "TypeScript",
     "Blockchain",
     "Tool"
   ],
@@ -67,22 +60,13 @@
     "web3-providers-2.x": "npm:web3-providers@^2.0.0-alpha.1",
     "web3-utils": "^1.2.4",
     "web3-1.x": "npm:web3@1.2.2",
-    "web3-2.x": "npm:web3@^2.0.0-alpha.1",
-    "@types/web3": "^1.2.2"
+    "web3-2.x": "npm:web3@^2.0.0-alpha.1"
   },
   "devDependencies": {
-    "@types/chai": "^4.2.7",
-    "@types/mocha": "^5.2.7",
-    "@types/node": "^12.12.17",
     "chai": "^4.2.0",
     "ethereumjs-tx": "^2.1.2",
-    "create-ts-index": "^1.12.0",
     "nock": "^11.7.2",
     "mocha": "^6.2.2",
-    "prettier": "^1.19.1",
-    "ts-node": "^8.5.4",
-    "tslint": "^5.20.1",
-    "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.7.2"
+    "prettier": "^1.19.1"
   }
 }

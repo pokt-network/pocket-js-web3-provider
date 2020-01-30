@@ -1,18 +1,23 @@
 /**
- * @author Pabel Nunez Landestoy <pabel@pokt.network>
- * @description Unit test for the Pocket Web3 Provider
- */
-import { expect, assert } from "chai"
-import { PocketProvider } from "../../src/pocket-provider"
-import { TransactionSigner } from "../../src/transaction-signer"
-import { Transaction } from "ethereumjs-tx"
-import { numberToHex } from "web3-utils"
-import { Configuration, PocketAAT, Node, BondStatus } from "pocket-js-core"
-import { NockUtil } from '../utils/nock-util'
+* @author Pabel Nunez Landestoy <pabel@pokt.network>
+* @description Unit test for the Pocket Web3 Provider
+*/
+const expect = require('chai').expect
+const assert = require('chai').assert
+const PocketProvider = require('../../src/pocket-provider.js')
+const TransactionSigner = require('../../src/transaction-signer.js')
+const Transaction = require('ethereumjs-tx').Transaction
+const numberToHex = require('web3-utils').numberToHex
+const Pocket = require('pocket-js-core')
+const Configuration = Pocket.Configuration
+const PocketAAT = Pocket.PocketAAT
+const Node = Pocket.Node
+const BondStatus = Pocket.BondStatus
+const NockUtil = require('../utils/nock-util.js')
 // To test with Web3 2.x use 'web3-2.x' and for Web3 1.x use 'web3-1.x'
-import Web3 from 'web3-2.x'
-import { TransactionConfig } from 'web3-core'
-import { HttpProvider } from "web3-providers-2.x"
+const Web3 = require('web3-2.x')
+const TransactionConfig = require('web3-core').TransactionConfig
+const HttpProvider = require('web3-providers-2.x').HttpProvider
 
 // For Testing we are using dummy data, none of the following information is real.
 const version = '0.0.1'
@@ -21,16 +26,17 @@ const clientPublicKey = 'f6d04ee2490e85f3f9ade95b80948816bd9b2986d5554aae347e7d2
 const applicationPublicKey = 'd9c7f275388ca1f87900945dba7f3a90fa9bba78f158c070aa12e3eccf53a2eb'
 const applicationPrivateKey = '15f53145bfa6efdde6e65ce5ebfd330ac0a2591ae451a8a03ace99eff894b9eed9c7f275388ca1f87900945dba7f3a90fa9bba78f158c070aa12e3eccf53a2eb'
 const passphrase = "passphrase123"
+
 // Ethereum data setup for test
 const ethTxSigner = {
     // Needs at least 2 accounts in the node to run all tests
     accounts: ["0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f", "0xF0BE394Fb2Def90824D11C7Ea189E75a8e868fA6"],
-    hasAddress: async (address: string): Promise<boolean> => {
+    hasAddress: async function(address) {
         return ethTransactionSigner.accounts.includes(address)
     },
     // Update this object with the address - private keys for each account in the same order they are declared
     privateKeys: ["330D1AD67A9E44E15F5B7EBD20514865CBCE363B2E95FFC9D9C95198EF2893F3"],
-    signTransaction: async (txParams: {}): Promise<string> => {
+    signTransaction: async function(txParams) {
         const pkString = ethTransactionSigner.privateKeys[0]
         const privateKeyBuffer = Buffer.from(pkString, 'hex')
         const tx = new Transaction(txParams)
@@ -38,6 +44,7 @@ const ethTxSigner = {
         return '0x' + tx.serialize().toString('hex')
     }
 }
+
 // Transaction Signer
 const ethTransactionSigner = new TransactionSigner(ethTxSigner.accounts, ethTxSigner.privateKeys, ethTxSigner.hasAddress, ethTxSigner.signTransaction)
 // PocketAAT
@@ -69,22 +76,21 @@ describe('Ethereum PocketProvider', function () {
                 "id": (new Date()).getTime()
             }
             // Retrieve the balance of one of the accounts
-            NockUtil.mockRelay()
+            // NockUtil.mockRelay()
             const web3Ins = new Web3(provider)
-            web3Ins.setProvider(provider as PocketProvider)
-            // const response = await web3Ins.eth.getBalance(ethTransactionSigner.accounts[0])
-            console.log(web3Ins.currentProvider as PocketProvider)
+            
+            const response = await web3Ins.eth.getBalance(ethTransactionSigner.accounts[0])
             // provider.send = function send(payload: {}): Promise<any> {
             //         console.log("CUSTOM SEND")
             //         return Promise.resolve("")
             // }
-            const response = await provider.send(payload)
+            // const response = await provider.send(payload)
             
             expect(response).to.not.be.instanceOf(Error)
             // const response = await provider.send("eth_getBalance", [ethTransactionSigner.accounts[0], "latest"])
             // const response = await provider.send(payload)
             
-        })
+        }).timeout(0)
 
         // it('should submit transactions using eth_sendTransaction', async () => {
         //     // Import and Unlock an account
@@ -103,7 +109,7 @@ describe('Ethereum PocketProvider', function () {
         //     // NockUtil.mockRelay()
         //     const response = await web3Client.eth.sendTransaction(tx)
         //     expect(response).to.not.be.an.instanceof(Error)
-        // })
+        // }).timeout(0)
     })
     // describe("Error scenarios", async () => {
     //     const emptyBlockchainHex = ""
