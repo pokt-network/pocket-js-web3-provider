@@ -1,64 +1,28 @@
-import {
-  Pocket,
-  Configuration,
-  RpcErrorResponse,
-  RelayHeaders,
-  typeGuard,
-  PocketAAT,
-  Hex
-} from "pocket-js-core"
-import { TransactionSigner } from "./transaction-signer"
-import { HttpProvider, HttpProviderOptions } from 'web3-providers-2.x'
+const PocketJSCore = require('pocket-js-core')
+const Pocket = PocketJSCore.Pocket
+const typeGuard = PocketJSCore.typeGuard
+const Hex = Pocket.Hex
+const HttpProvider = require('web3-providers-2.x').HttpProvider
 
-/**
- * Pocket Web3 Provider
- * Sends Relays to a service node in the Pocket Network
- * @param {string} activeBlockchain - Blockchain hash.
- * @param {Configuration} configuration - Pocket Configuration.
- * @param {TransactionSigner} transactionSigner - (optional) Transaction signer object.
- */
-export class PocketProvider extends HttpProvider {
-  public readonly pocket: Pocket
-  public readonly pocketAAT: PocketAAT
-  public readonly transactionSigner?: TransactionSigner
-  public activeBlockchain: string
-  public isConnected = true
-
-  constructor(
-    activeBlockchain: string,
-    pocketAAT: PocketAAT,
-    configuration: Configuration,
-    transactionSigner?: TransactionSigner,
-    host: string = "",
-    timeout: HttpProviderOptions = { timeout: 10000 }
-  ) {
-    
-    super(host, timeout)
-    try {
-      this.pocket = new Pocket(configuration)
-      this.activeBlockchain = activeBlockchain
-      this.pocketAAT = pocketAAT
-      this.transactionSigner = transactionSigner
-    } catch (error) {
-      throw error
-    }
+class PocketProvider {
+  constructor(activeBlockchain, pocketAAT, configuration, transactionSigner) {
+    this.pocket = new Pocket(configuration)
+    this.activeBlockchain = activeBlockchain
+    this.pocketAAT = pocketAAT
+    this.transactionSigner = transactionSigner
+    this.isConnected = true
   }
+
   /**
    * activeBlockchain property setter
    * @method setActiveBlockchain
    * @param {string} - Blockchain hex representation.
    * @memberof PocketProvider
    */
-  public set setActiveBlockchain(blockchain: string) {
+  set setActiveBlockchain(blockchain) {
     if (blockchain.length !== 0 && Hex.isHex(blockchain)) {
       this.activeBlockchain = blockchain
     }
-  }
-  // TODO: For testing please remove
-  send2(method: string, parameters: any[]): Promise<any> {
-    super.send(method, parameters)
-    console.log("CUSTOM SEND")
-    return Promise.resolve("")
   }
   /**
    * 
@@ -67,17 +31,16 @@ export class PocketProvider extends HttpProvider {
    * @returns {RelayResponse} - Relay response object.
    * @memberof PocketProvider
    */
-  public async send(payload: {}): Promise<any> {
+  async send(payload) {
+    console.log("SEND!!! ! ! ! !! ")
     // Check the relay request
-    console.log('PAYLOAD = '+payload)
-    
     const relayData = await this._generateRelayData(payload)
     if (typeGuard(relayData, Error)) {
       throw relayData
     }
-    super.send(relayData.method, relayData.parameters)
-    const relayHeaders: RelayHeaders = { [""]: "" }
-
+    const relayHeaders = {
+      [""]: ""
+    }
     try {
       // Send relay to the network
       const result = await this.pocket.sendRelay(
@@ -99,12 +62,13 @@ export class PocketProvider extends HttpProvider {
       throw error
     }
   }
+
   /**
    * Verifies the Pocket Provider minimum requirements
    * @method isValid
    * @memberof PocketProvider
    */
-  public isValid() {
+  isValid() {
     return this.activeBlockchain.length !== 0 &&
       Hex.isHex(this.activeBlockchain) &&
       this.pocketAAT.isValid()
@@ -116,9 +80,7 @@ export class PocketProvider extends HttpProvider {
    * @returns {RelayResponse} - A relay response object.
    * @memberof PocketProvider
    */
-  private async _getNonce(
-    sender: string
-  ): Promise<{} | Error> {
+  async _getNonce(sender) {
     const data = JSON.stringify({
       "id": new Date().getTime(),
       "jsonrpc": "2.0",
@@ -144,9 +106,7 @@ export class PocketProvider extends HttpProvider {
    * @returns {any} - Relay request data object.
    * @memberof PocketProvider
    */
-  private async _generateRelayData(
-    payload: any = {}
-  ): Promise<any | Error> {
+  async _generateRelayData(payload) {
     // Retrieve method from payload
     const method = payload.method
     // Check rpc method
@@ -165,9 +125,7 @@ export class PocketProvider extends HttpProvider {
    * @returns {RelayRequest} - Relay request.
    * @memberof PocketProvider
    */
-  private async _parseRelayParams(
-    payload: any = {}
-  ): Promise<any | Error> {
+  async _parseRelayParams(payload) {
     const txParams = payload.params
     const sender = payload.from
 
@@ -203,7 +161,8 @@ export class PocketProvider extends HttpProvider {
       "method": "eth_sendRawTransaction",
       "params": [signedTx]
     }
-
     return relayData
   }
 }
+
+module.exports = PocketProvider

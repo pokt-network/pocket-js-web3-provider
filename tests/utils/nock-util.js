@@ -1,8 +1,8 @@
-import nock from 'nock'
+const nock = require('nock')
 
-export class NockUtil {
-    public static mockRelay(code: number = 200): nock.Scope{
-        const data: any = this.createData(code, {
+class NockUtil {
+    static mockRelay(code = 200) {
+        const data = this.createData(code, {
             proof: 'proof',
             response: 'response',
             signature: 'signature'
@@ -11,19 +11,19 @@ export class NockUtil {
     }
     
     // Private functions
-    private static nockRoute(path: string = "", code: number = 200, data: any): nock.Scope{
+    static nockRoute(path = "", code = 200, data) {
         return nock('http://127.0.0.1:80/').get(path).reply(code, data)
     }
 
-    private static getError(): any {
+    static getError() {
         return {
             code: 500,
             message: 'Internal Server Error.'
         }
     }
 
-    private static createData(code: number, payload: any): any {
-        let data: any
+    static createData(code, payload) {
+        let data
         switch(true) {
             case (code > 190 && code < 204):
                 data = payload
@@ -33,3 +33,4 @@ export class NockUtil {
         return data
     }
 }
+module.exports = NockUtil
