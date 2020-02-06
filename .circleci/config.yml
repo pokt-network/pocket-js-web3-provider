@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - checkout
-      - run: npm -g install npm@6.13.4
+      - run: sudo npm -g install npm@6.13.4
       - run: npm install
       # run tests!
       - run: npm test
