@@ -1,8 +1,7 @@
-const PocketJSCore = require('pocket-js-core')
-const Pocket = PocketJSCore.Pocket
-const typeGuard = PocketJSCore.typeGuard
-const Hex = Pocket.Hex
-const HttpProvider = require('web3-providers-2.x').HttpProvider
+const pocket_core = require('pocket-js-core')
+const Pocket = pocket_core.Pocket
+const typeGuard = pocket_core.typeGuard
+const Hex = pocket_core.Hex
 
 class PocketProvider {
   constructor(activeBlockchain, pocketAAT, configuration, transactionSigner) {
@@ -11,8 +10,11 @@ class PocketProvider {
     this.pocketAAT = pocketAAT
     this.transactionSigner = transactionSigner
     this.isConnected = true
-  }
 
+    if (!this.isValid()) {
+      throw new Error("Invalid PocketProvider properties.");
+    }
+  }
   /**
    * activeBlockchain property setter
    * @method setActiveBlockchain
@@ -31,15 +33,14 @@ class PocketProvider {
    * @returns {RelayResponse} - Relay response object.
    * @memberof PocketProvider
    */
-  async send(payload) {
-    console.log("SEND!!! ! ! ! !! ")
+  async send(payload, callback) {
     // Check the relay request
     const relayData = await this._generateRelayData(payload)
     if (typeGuard(relayData, Error)) {
       throw relayData
     }
     const relayHeaders = {
-      [""]: ""
+      "Content-Type": "application/json"
     }
     try {
       // Send relay to the network
@@ -49,17 +50,31 @@ class PocketProvider {
         relayHeaders,
         this.pocketAAT,
       )
-      // Handle the result
+      // Handle the result if is an Error
       if (typeGuard(result, Error)) {
         this.isConnected = false
-        // Throw error result
-        throw result
-      } else {
-        return JSON.parse(result.response)
+        // Return error result
+        if (callback) {
+          callback(result)
+          return
+        }
+        return result
       }
+      // Result is SendResponse
+      if (callback) {
+        callback(null, JSON.parse(result.response))
+        return
+      }
+      // return if async
+      return JSON.parse(result.response)
     } catch (error) {
       this.isConnected = false
-      throw error
+      if (callback) {
+        callback(error)
+        return
+      }
+      // return if async
+      return error
     }
   }
 
@@ -70,7 +85,6 @@ class PocketProvider {
    */
   isValid() {
     return this.activeBlockchain.length !== 0 &&
-      Hex.isHex(this.activeBlockchain) &&
       this.pocketAAT.isValid()
   }
   /**
@@ -107,13 +121,17 @@ class PocketProvider {
    * @memberof PocketProvider
    */
   async _generateRelayData(payload) {
-    // Retrieve method from payload
-    const method = payload.method
-    // Check rpc method
-    if (method !== undefined && method === "eth_sendTransaction") {
-      const relayData = await this._parseRelayParams(payload)
-      return relayData
-    } else {
+    try {
+      // Retrieve method from payload
+      const method = payload.method
+      // Check rpc method
+      if (method !== undefined && method === "eth_sendTransaction") {
+        const relayData = await this._parseRelayParams(payload)
+        return relayData
+      } else {
+        return payload
+      }
+    } catch {
       return payload
     }
   }
@@ -126,8 +144,8 @@ class PocketProvider {
    * @memberof PocketProvider
    */
   async _parseRelayParams(payload) {
-    const txParams = payload.params
-    const sender = payload.from
+    const txParams = payload.params[0]
+    const sender = txParams.from
 
     // Verify address exists in the TransactionSigner
     if (this.transactionSigner === undefined) {
