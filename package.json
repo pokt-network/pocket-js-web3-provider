@@ -2,7 +2,7 @@
   "name": "pocket-js-web3-provider",
   "version": "0.1.0",
   "engine": {
-    "node": ">= 11.6.0"
+    "node": ">= 12.15.0"
   },
   "description": "Pocket JavaScript Web3 Provider",
   "license": "MIT",
