@@ -13,13 +13,13 @@ const Configuration = pocket_core.Configuration
 const PocketAAT = pocket_core.PocketAAT
 const Node = pocket_core.Node
 const BondStatus = pocket_core.BondStatus
-const Environment = pocket_core.Environment
+const LocalNet = pocket_core.LocalNet
 const NockUtil = require('../utils/nock-util.js')
 // To test with Web3 2.x use 'web3-2.x' and for Web3 1.x use 'web3-1.x'
 const Web3 = require('web3-2.x')
 
 // For Testing we are using dummy data, none of the following information is real.
-const env = new Environment.LocalNet()
+const env = new LocalNet()
 const version = '0.0.1'
 const addressHex = "84871BAF5B4E01BE52E5007EACF7048F24BF57E0"
 const clientPublicKey = 'f6d04ee2490e85f3f9ade95b80948816bd9b2986d5554aae347e7d21d93b6fb5'

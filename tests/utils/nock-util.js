@@ -1,6 +1,6 @@
 const nock = require('nock')
 const pocket_core = require('pocket-js-core')
-const Environment = pocket_core.Environment
+const LocalNet = pocket_core.LocalNet
 const Proof = pocket_core.Proof
 const Node = pocket_core.Node
 const SessionHeader = pocket_core.SessionHeader
@@ -9,7 +9,7 @@ const Routes = pocket_core.Routes
 const RPCRoutes = pocket_core.RPCRoutes
 const PocketAAT = pocket_core.PocketAAT
 
-const env = new Environment.LocalNet()
+const env = new LocalNet()
 const version = '0.0.1'
 const addressHex = "84871BAF5B4E01BE52E5007EACF7048F24BF57E0"
 const clientPublicKey = 'f6d04ee2490e85f3f9ade95b80948816bd9b2986d5554aae347e7d21d93b6fb5'
