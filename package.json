@@ -1,8 +1,9 @@
 {
   "name": "pocket-js-web3-provider",
   "version": "0.1.0",
-  "engine": {
-    "node": ">= 12.15.0"
+  "engines": {
+    "node": ">= 10.19.0",
+    "npm": ">= 6.9"
   },
   "description": "Pocket JavaScript Web3 Provider",
   "license": "MIT",
@@ -56,11 +57,11 @@
   "homepage": "https://github.com/pokt-network/pocket-js-web3-provider#readme",
   "dependencies": {
     "pocket-js-core": "github:pokt-network/pocket-js#staging",
+    "web3-1.x": "npm:web3@1.2.2",
+    "web3-2.x": "npm:web3@^2.0.0-alpha.1",
     "web3-providers-1.x": "npm:web3-providers@1.0.0-beta.55",
     "web3-providers-2.x": "npm:web3-providers@^2.0.0-alpha.1",
-    "web3-utils": "^1.2.4",
-    "web3-1.x": "npm:web3@1.2.2",
-    "web3-2.x": "npm:web3@^2.0.0-alpha.1"
+    "web3-utils": "^1.2.4"
   },
   "devDependencies": {
     "chai": "^4.2.0",
