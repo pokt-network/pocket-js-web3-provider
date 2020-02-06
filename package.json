@@ -11,7 +11,7 @@
     "tests": "./tests"
   },
   "scripts": {
-    "test": "mocha tests/src/*.js"
+    "test": "mocha tests/src/*.js --exit"
   },
   "repository": {
     "type": "git",
