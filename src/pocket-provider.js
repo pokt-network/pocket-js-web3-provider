@@ -4,8 +4,8 @@ const typeGuard = pocket_core.typeGuard
 const Hex = pocket_core.Hex
 
 class PocketProvider {
-  constructor(activeBlockchain, pocketAAT, configuration, transactionSigner) {
-    this.pocket = new Pocket(configuration)
+  constructor(activeBlockchain, pocketAAT, configuration, rpcProvider, transactionSigner) {
+    this.pocket = new Pocket(configuration, rpcProvider)
     this.activeBlockchain = activeBlockchain
     this.pocketAAT = pocketAAT
     this.transactionSigner = transactionSigner
@@ -39,15 +39,12 @@ class PocketProvider {
     if (typeGuard(relayData, Error)) {
       throw relayData
     }
-    const relayHeaders = {
-      "Content-Type": "application/json"
-    }
+    
     try {
       // Send relay to the network
       const result = await this.pocket.sendRelay(
         JSON.stringify(relayData),
         this.activeBlockchain,
-        relayHeaders,
         this.pocketAAT,
       )
       // Handle the result if is an Error
