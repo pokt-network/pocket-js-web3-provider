@@ -1,5 +1,5 @@
 {
-  "name": "@pokt-network/pocket-js-web3-provider",
+  "name": "@pokt-network/web3-provider",
   "version": "0.0.1-rc",
   "engines": {
     "node": ">= 10.19.0",
