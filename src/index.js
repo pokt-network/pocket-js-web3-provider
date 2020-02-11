@@ -1,0 +1,1 @@
+module.exports = Object.assign(module.exports, require('./pocket-provider'), require('./transaction-signer'));
