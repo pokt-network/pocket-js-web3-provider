@@ -4,73 +4,97 @@
   </a>
 </div>
 
-# Project Title
-
-One sentence summary of project
-<div>
-  <a  href="https://godoc.org/github.com/pokt-network/pocket-core"><img src="https://img.shields.io/badge/godoc-reference-blue.svg"/></a>
-  <a  href="https://goreportcard.com/report/github.com/pokt-network/pocket-core"><img src="https://goreportcard.com/badge/github.com/pokt-network/pocket-core"/></a>
-  <a href="https://golang.org"><img  src="https://img.shields.io/badge/golang-v1.11-red.svg"/></a>
-  <a  href="https://github.com/tools/godep" ><img src="https://img.shields.io/badge/godep-dependency-71a3d9.svg"/></a>
+# Pocket-JS-Web3-Provider
+Official Javascript Web3 Provider to use with the Pocket Network
+<div align="lef">
+  <a  href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference">
+    <img src="https://img.shields.io/badge/js-reference-yellow.svg"/>
+  </a>
+  <a href="https://nodejs.org/"><img  src="https://img.shields.io/badge/node-%3E%3D%2010.19.0-brightgreen"/></a>
+  <a href="https://npmjs.com/"><img  src="https://img.shields.io/badge/npm-%3E%3D%206.9-brightgreen"/></a>
 </div>
 
-## Overview
-<div>
-    <a  href="https://github.com/pokt-network/pocket-core/releases"><img src="https://img.shields.io/github/release-pre/pokt-network/pocket-core.svg"/></a>
-    <a href="https://circleci.com/gh/pokt-network/pocket-core/tree/staging"><img src="https://circleci.com/gh/pokt-network/pocket-core/tree/staging.svg?style=svg"/></a>
-    <a  href="https://github.com/pokt-network/pocket-core/pulse"><img src="https://img.shields.io/github/contributors/pokt-network/pocket-core.svg"/></a>
-    <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg"/></a>
-    <a href="https://github.com/pokt-network/pocket-core/pulse"><img src="https://img.shields.io/github/last-commit/pokt-network/pocket-core.svg"/></a>
-    <a href="https://github.com/pokt-network/pocket-core/pulls"><img src="https://img.shields.io/github/issues-pr/pokt-network/pocket-core.svg"/></a>
-    <a href="https://github.com/pokt-network/pocket-core/releases"><img src="https://img.shields.io/badge/platform-linux%20%7C%20windows%20%7C%20macos-pink.svg"/></a>
-    <a href="https://github.com/pokt-network/pocket-core/issues"><img src="https://img.shields.io/github/issues-closed/pokt-network/pocket-core.svg"/></a>
+<h1 align="left">Overview</h1>
+  <div align="left">
+    <a  href="https://github.com/pokt-network/pocket-js-web3-provider/releases">
+      <img src="https://img.shields.io/github/release-pre/pokt-network/pocket-js-web3-provider.svg"/>
+    </a>
+    <a href="https://circleci.com/gh/pokt-network/pocket-js-web3-provider/tree/master">
+      <img src="https://circleci.com/gh/pokt-network/pocket-js-web3-provider/tree/master.svg?style=svg"/>
+    </a>
+    <a  href="https://github.com/pokt-network/pocket-js-web3-provider/pulse">
+      <img src="https://img.shields.io/github/contributors/pokt-network/pocket-js-web3-provider.svg"/>
+    </a>
+    <a href="https://opensource.org/licenses/MIT">
+      <img src="https://img.shields.io/badge/License-MIT-blue.svg"/>
+    </a>
+    <br >
+    <a href="https://github.com/pokt-network/pocket-js-web3-provider/pulse">
+      <img src="https://img.shields.io/github/last-commit/pokt-network/pocket-js-web3-provider.svg"/>
+    </a>
+    <a href="https://github.com/pokt-network/pocket-js-web3-provider/pulls">
+      <img src="https://img.shields.io/github/issues-pr/pokt-network/pocket-js-web3-provider.svg"/>
+    </a>
+    <a href="https://github.com/pokt-network/pocket-js-web3-provider/issues">
+      <img src="https://img.shields.io/github/issues-closed/pokt-network/pocket-js-web3-provider.svg"/>
+    </a>
 </div>
-
-Full Description
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-### Example usage
+### Requirements
 
-```
-The most basic example of how you would use the project
-```
+You should have at least have a basic knowledge of blockchain technology and know your way around JavaScript. You will also need to install the [NPM tool](https://www.npmjs.com/get-npm).
 
 ### Installation
 
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
 ```
-Give the step
+npm install --save @pokt-network/pocket-js-web3-provider
 ```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting data out of the system or using it for a demo
 
 ## Documentation
 
-Full usage and options or a link to the docs.pokt.network site
+If you would like to know how to integrate Pocket-JS-Web3-Provider into your DApp, [visit our developer portal](https://pocket-network.readme.io) that has a lot of useful tutorials and material about the Pocket Network.
+
+```javascript
+const lib = require('@pokt-network/web3-provider')
+const Pocket = lib.Pocket
+const Configuration = lib.Configuration
+const HttpRpcProvider = lib.HttpRpcProvider
+const Node = lib.Node
+const BondStatus = lib.BondStatus
+const PocketProvider = lib.PocketProvider
+
+const node = new Node(
+    nodeAddress, publiKey,
+    jailedStatus, BondStatus.bonded,
+    stakedTokens, serviceURL, chains
+)
+
+const configuration = new Configuration([node], 5, 60000, 1000000)
+const rpcProvider = new HttpRpcProvider(new URL(node.serviceURL))
+const pocket = new Pocket(configuration, rpcProvider)
+
+const pocketProvider = new PocketProvider(blockchainHash, pocketAAT, pocket, ethTransactionSigner | undefined)
+const web3Ins = new Web3(pocketProvider)
+
+web3Ins.eth.getBalance(clientAccount.addressHex).then(function(response, error){
+    console.log("Account balance = "+response)
+})
+
+```
 
 ## Running the tests
 
-Explain how to run the automated tests
-
 ```
-Give an example
+npm run test
 ```
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on contributions and the process of submitting pull requests.
+Please read [CONTRIBUTING.md](https://github.com/pokt-network/pocket-js-web3-provider/blob/staging/CONTRIBUTING.md) for details on contributions and the process of submitting pull requests.
 
 ## Support & Contact
 
@@ -81,7 +105,6 @@ Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c6
   <a href="https://research.pokt.network"><img src="https://img.shields.io/discourse/https/research.pokt.network/posts.svg"></a>
 </div>
 
-
 ## License
 
-This project is licensed under the Apache 2.0 License; see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the MIT License; see the [LICENSE.md](LICENSE.md) file for details.
