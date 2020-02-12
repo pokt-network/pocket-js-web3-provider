@@ -12,4 +12,4 @@ class TransactionSigner {
   }
 }
 
-module.exports = TransactionSigner
+module.exports.TransactionSigner = TransactionSigner

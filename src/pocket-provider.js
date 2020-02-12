@@ -192,4 +192,4 @@ class PocketProvider {
   }
 }
 
-module.exports = PocketProvider
+module.exports.PocketProvider = PocketProvider
