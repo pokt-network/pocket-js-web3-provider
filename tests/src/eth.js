@@ -4,8 +4,8 @@
  */
 const expect = require('chai').expect
 const assert = require('chai').assert
-const PocketProvider = require('../../src/pocket-provider.js')
-const TransactionSigner = require('../../src/transaction-signer.js')
+const PocketProvider = require('../../src/pocket-provider.js').PocketProvider
+const TransactionSigner = require('../../src/transaction-signer.js').TransactionSigner
 const Transaction = require('ethereumjs-tx').Transaction
 const numberToHex = require('web3-utils').numberToHex
 const pocket_core = require('@pokt-network/pocket-js')
