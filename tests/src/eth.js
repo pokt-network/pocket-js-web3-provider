@@ -8,7 +8,7 @@ const PocketProvider = require('../../src/pocket-provider.js')
 const TransactionSigner = require('../../src/transaction-signer.js')
 const Transaction = require('ethereumjs-tx').Transaction
 const numberToHex = require('web3-utils').numberToHex
-const pocket_core = require('pocket-js-core')
+const pocket_core = require('@pokt-network/pocket-js')
 const Configuration = pocket_core.Configuration
 const Pocket = pocket_core.Pocket
 const PocketAAT = pocket_core.PocketAAT
@@ -43,143 +43,117 @@ const ethTxSigner = {
 // Relay requirements
 const version = '0.0.1'
 const passphrase = "passphrase123"
-const appPubKeyHex = "d3814cf87d0d0b249dc9727d2e124a03cbb4d23e37c169833ef88562546f0958"
-const appPrivKeyHex = "2dec343f5d225be87663194f5ce61611ee585ab68baf1046694b0045124bd1a5d3814cf87d0d0b249dc9727d2e124a03cbb4d23e37c169833ef88562546f0958"
+const appAddressHex = "cef2cb8d2f4119a180c8b19def1fdec05a7b800d"
+const appPubKeyHex = "25e433add38bee8bf9d5236267f6c9b8f3d224a0f164f142c351f441792f2b2e"
+const appPrivKeyHex = "640d19b8bfb1cd70fe565ead88e705beaab34fe18fb0879d32539ebfe5ba511725e433add38bee8bf9d5236267f6c9b8f3d224a0f164f142c351f441792f2b2e"
+// Client account
+const clientPubKey = "076cd88affc8e9bc255b2b44d948031b2d9066f5e9ae5b2efba32138e246219e"
 // Transaction Signer
 const ethTransactionSigner = new TransactionSigner(ethTxSigner.accounts, ethTxSigner.privateKeys, ethTxSigner.hasAddress, ethTxSigner.signTransaction)
 // Active blockchain
-const blockchain = "49aff8a9f51b268f6fc485ec14fb08466c3ec68c8d86d9b5810ad80546b65f29"
+const blockchain = "8cf7f8799c5b30d36c86d18f0f4ca041cf1803e0414ed9e9fd3a19ba2f0938ff"
 // Pocket instance requirements
 const dispatchNodeJSON = "{\"address\":\"189ceb72c06b99e15a53fd437b81d4500f7a01f1\",\"public_key\":\"1839f4836f22d438692355b2ee34e47d396f6eb23b423bf3a1e623137ddbf7e3\",\"jailed\":false,\"status\":2,\"tokens\":\"1000000000\",\"service_url\":\"http:\/\/35.245.90.148:8081\",\"chains\":[\"6d3ce011e06e27a74cfa7d774228c52597ef5ef26f4a4afa9ad3cebefb5f3ca8\",\"49aff8a9f51b268f6fc485ec14fb08466c3ec68c8d86d9b5810ad80546b65f29\"],\"unstaking_time\":\"0001-01-01T00:00:00Z\"}"
 const dispatchNode = Node.fromJSON(dispatchNodeJSON)
 const configuration = new Configuration([dispatchNode], 5, 60000, 1000000)
 const rpcProvider = new HttpRpcProvider(new URL(dispatchNode.serviceURL))
+const pocket = new Pocket(configuration, rpcProvider)
 
 describe('Ethereum PocketProvider', function () {
     describe("Success scenarios", async () => {
         it('should create a new instance of the PocketProvider', function () {
             expect(function () {
-                const pocketProvider = new PocketProvider(blockchain, pocketAAT, configuration, ethTransactionSigner)
+                const pocketAAT = PocketAAT.from(version, clientPubKey, appPubKeyHex, appPrivKeyHex)
+                const pocketProvider = new PocketProvider(blockchain, pocketAAT, pocket, ethTransactionSigner)
             }).to.not.throw(Error)
         })
 
         it('should send a new request', async () => {
             try {
-                // Generate AAT
+                // Generate client account
                 const clientPassphrase = "1234"
-                const pocket = new Pocket(configuration, rpcProvider)
-                const account = await pocket.keybase.createAccount(clientPassphrase)
-                const error = await pocket.keybase.unlockAccount(account.addressHex, clientPassphrase, 0)
-                expect(error).to.not.be.instanceOf(Error)
-                const pocketAAT = PocketAAT.from(version, account.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
+                const clientAccountOrError = await pocket.keybase.createAccount(clientPassphrase)
 
+                const clientAccount = clientAccountOrError
+                const error = await pocket.keybase.unlockAccount(clientAccount.addressHex, clientPassphrase, 0)
+                expect(error).to.be.undefined
+                // Generate AAT
+                const aat = PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
                 // Creae Pocket Provider
-                const provider = new PocketProvider(blockchain, pocketAAT, configuration, rpcProvider, ethTransactionSigner)
-                
+                const provider = new PocketProvider(blockchain, aat, pocket, ethTransactionSigner)
+
                 // Web3
                 const web3Ins = new Web3(provider)
-                // Retrieve the balance of one of the accounts
-                // NockUtil.mockDispatch()
-                // NockUtil.mockGetHeight()
-                // NockUtil.mockGetNodeParams()
-                // NockUtil.mockRelay()
 
-                const response = await web3Ins.eth.getBalance(account.addressHex)
-                expect(response).to.not.be.instanceOf(Error)
+                web3Ins.eth.getBalance(clientAccount.addressHex).then(function(response, error){
+                    expect(response).to.not.be.undefined.true
+                    expect(response).to.not.be.instanceOf(Error)
+                })
             } catch (error) {
                 expect(error).to.not.be.instanceOf(Error)
             }
         }).timeout(0)
-
-        // it('should submit transactions using eth_sendTransaction', async () => {
-        //     // Import and Unlock an account
-        //     provider.provider.pocket.importAndUnlockAccount(passphrase, appPrivKeyHex)
-        //     // Transfers eth from accounts[0] to accounts[1]
-        //     var tx = {
-        //         from: ethTransactionSigner.accounts[0],
-        //         to: ethTransactionSigner.accounts[1],
-        //         value: numberToHex(10000), // Change value for the amount being sent
-        //         gas: "0x5208",
-        //         gasPrice: "0x3B9ACA00",
-        //         nonce: numberToHex(12345)
-        //     }
-
-        //     var payload = {
-        //         jsonrpc: "2.0",
-        //         method: "eth_sendTransaction",
-        //         params: [tx],
-        //         id: (new Date()).getTime()
-        //     }
-        //     // Mock responses
-        //     NockUtil.mockDispatch()
-        //     NockUtil.mockGetHeight()
-        //     NockUtil.mockGetNodeParams()
-        //     NockUtil.mockTransactionRelay()
-
-        //     const response = await provider.send(payload)
-        //     expect(response).to.not.be.an.instanceof(Error)
-        // }).timeout(0)
     })
-    // describe("Error scenarios", async () => {
-    //     const emptyBlockchainHex = ""
+    describe("Error scenarios", async () => {
+        const emptyBlockchainHex = ""
 
-    //     it('should fail to instantiate the PocketProvider due to empty blockchain string', async () => {
-    //         try {
-    //             const provider = new PocketProvider(emptyBlockchainHex, pocketAAT, configuration, ethTransactionSigner)
-    //             expect(provider).to.be.an.instanceof(Error)
-    //         } catch (error) {
-    //             expect(error).to.be.an.instanceof(Error)
-    //         }
-    //     })
+        it('should fail to instantiate the PocketProvider due to empty blockchain string', async () => {
+            try {
+                const provider = new PocketProvider(emptyBlockchainHex, pocketAAT, pocket, ethTransactionSigner)
+                expect(provider).to.be.an.instanceof(Error)
+            } catch (error) {
+                expect(error).to.be.an.instanceof(Error)
+            }
+        })
 
-    //     it('should fail to retrieve the account balance due to empty account address string', async () => {
-    //         try {
-    //             // Web3
-    //             const web3Ins = new Web3(provider)
-    //             // Retrieve the balance of one of the accounts
-    //             NockUtil.mockDispatch()
-    //             NockUtil.mockGetHeight()
-    //             NockUtil.mockGetNodeParams()
-    //             NockUtil.mockRelay()
+        it('should fail to retrieve the account balance due to empty account address string', async () => {
+            try {
+                // Web3
+                const web3Ins = new Web3(provider)
+                // Retrieve the balance of one of the accounts
+                NockUtil.mockDispatch()
+                NockUtil.mockGetHeight()
+                NockUtil.mockGetNodeParams()
+                NockUtil.mockRelay()
 
-    //             const response = await web3Ins.eth.getBalance("")
-    //             expect(response).to.be.instanceOf(Error)
-    //         } catch (error) {
-    //             expect(error).to.be.instanceOf(Error)
-    //         }
-    //     })
+                const response = await web3Ins.eth.getBalance("")
+                expect(response).to.be.instanceOf(Error)
+            } catch (error) {
+                expect(error).to.be.instanceOf(Error)
+            }
+        })
 
-    //     it('should fail to send a new transaction due to no account imported and unlocked', async () => {
-    //         try {
-    //             // Import and Unlock an account
-    //             // provider.provider.pocket.importAndUnlockAccount(passphrase, appPrivKeyHex)
-    //             // Transfers eth from accounts[0] to accounts[1]
-    //             var tx = {
-    //                 from: ethTransactionSigner.accounts[0],
-    //                 to: ethTransactionSigner.accounts[1],
-    //                 value: numberToHex(10000), // Change value for the amount being sent
-    //                 gas: "0x5208",
-    //                 gasPrice: "0x3B9ACA00",
-    //                 nonce: numberToHex(12345)
-    //             }
+        it('should fail to send a new transaction due to no account imported and unlocked', async () => {
+            try {
+                // Import and Unlock an account
+                // provider.provider.pocket.importAndUnlockAccount(passphrase, appPrivKeyHex)
+                // Transfers eth from accounts[0] to accounts[1]
+                var tx = {
+                    from: ethTransactionSigner.accounts[0],
+                    to: ethTransactionSigner.accounts[1],
+                    value: numberToHex(10000), // Change value for the amount being sent
+                    gas: "0x5208",
+                    gasPrice: "0x3B9ACA00",
+                    nonce: numberToHex(12345)
+                }
 
-    //             var payload = {
-    //                 jsonrpc: "2.0",
-    //                 method: "eth_sendTransaction",
-    //                 params: [tx],
-    //                 id: (new Date()).getTime()
-    //             }
-    //             // Mock responses
-    //             NockUtil.mockDispatch()
-    //             NockUtil.mockGetHeight()
-    //             NockUtil.mockGetNodeParams()
-    //             NockUtil.mockTransactionRelay()
+                var payload = {
+                    jsonrpc: "2.0",
+                    method: "eth_sendTransaction",
+                    params: [tx],
+                    id: (new Date()).getTime()
+                }
+                // Mock responses
+                NockUtil.mockDispatch()
+                NockUtil.mockGetHeight()
+                NockUtil.mockGetNodeParams()
+                NockUtil.mockTransactionRelay()
 
-    //             const response = await provider.send(payload)
-    //             expect(response).to.be.instanceOf(Error)
-    //         } catch (error) {
-    //             expect(error).to.be.instanceOf(Error)
-    //         }
-    //     })
-    // })
+                const response = await provider.send(payload)
+                expect(response).to.be.instanceOf(Error)
+            } catch (error) {
+                expect(error).to.be.instanceOf(Error)
+            }
+        })
+    })
 })
