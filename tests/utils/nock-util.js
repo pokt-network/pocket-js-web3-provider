@@ -1,5 +1,5 @@
 const nock = require('nock')
-const pocket_core = require('pocket-js-core')
+const pocket_core = require('@pokt-network/pocket-js')
 const EnvironmentHelper = require('../utils/env/helper').EnvironmentHelper
 const Proof = pocket_core.Proof
 const Node = pocket_core.Node

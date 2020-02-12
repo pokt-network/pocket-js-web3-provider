@@ -1,11 +1,23 @@
-const pocket_core = require('pocket-js-core')
+/**
+ * @author Pabel Nunez Landestoy <pabel@pokt.network>
+ */
+const pocket_core = require('@pokt-network/pocket-js')
 const Pocket = pocket_core.Pocket
 const typeGuard = pocket_core.typeGuard
 const Hex = pocket_core.Hex
 
+/**
+ * Pocket Web3 Provider
+ *  Sends Relays to the Pocket Network
+ * @constructor
+ * @param {string} activeBlockchain - Target blockchain hash.
+ * @param {PocketAAT} pocketAAT - Pocket Authentication Token object.
+ * @param {Pocket} pocket - Pocket instance.
+ * @param {Object} transactionSigner - Object containing the TransactionSigner interface methods.
+ */
 class PocketProvider {
-  constructor(activeBlockchain, pocketAAT, configuration, rpcProvider, transactionSigner) {
-    this.pocket = new Pocket(configuration, rpcProvider)
+  constructor(activeBlockchain, pocketAAT, pocket, transactionSigner) {
+    this.pocket = pocket
     this.activeBlockchain = activeBlockchain
     this.pocketAAT = pocketAAT
     this.transactionSigner = transactionSigner
@@ -39,7 +51,7 @@ class PocketProvider {
     if (typeGuard(relayData, Error)) {
       throw relayData
     }
-    
+
     try {
       // Send relay to the network
       const result = await this.pocket.sendRelay(
@@ -58,12 +70,12 @@ class PocketProvider {
         return result
       }
       // Result is SendResponse
-      if (callback) {
-        callback(null, JSON.parse(result.response))
-        return
-      }
-      // return if async
-      return JSON.parse(result.response)
+        if (callback) {
+          callback(null, JSON.parse(result.response))
+          return
+        }
+        // return if async
+        return JSON.parse(result.response)
     } catch (error) {
       this.isConnected = false
       if (callback) {
