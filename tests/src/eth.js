@@ -42,8 +42,6 @@ const ethTxSigner = {
 
 // Relay requirements
 const version = '0.0.1'
-const passphrase = "passphrase123"
-const appAddressHex = "cef2cb8d2f4119a180c8b19def1fdec05a7b800d"
 const appPubKeyHex = "25e433add38bee8bf9d5236267f6c9b8f3d224a0f164f142c351f441792f2b2e"
 const appPrivKeyHex = "640d19b8bfb1cd70fe565ead88e705beaab34fe18fb0879d32539ebfe5ba511725e433add38bee8bf9d5236267f6c9b8f3d224a0f164f142c351f441792f2b2e"
 // Client account
@@ -53,11 +51,9 @@ const ethTransactionSigner = new TransactionSigner(ethTxSigner.accounts, ethTxSi
 // Active blockchain
 const blockchain = "8cf7f8799c5b30d36c86d18f0f4ca041cf1803e0414ed9e9fd3a19ba2f0938ff"
 // Pocket instance requirements
-const dispatchNodeJSON = "{\"address\":\"189ceb72c06b99e15a53fd437b81d4500f7a01f1\",\"public_key\":\"1839f4836f22d438692355b2ee34e47d396f6eb23b423bf3a1e623137ddbf7e3\",\"jailed\":false,\"status\":2,\"tokens\":\"1000000000\",\"service_url\":\"http:\/\/35.245.90.148:8081\",\"chains\":[\"6d3ce011e06e27a74cfa7d774228c52597ef5ef26f4a4afa9ad3cebefb5f3ca8\",\"49aff8a9f51b268f6fc485ec14fb08466c3ec68c8d86d9b5810ad80546b65f29\"],\"unstaking_time\":\"0001-01-01T00:00:00Z\"}"
-const dispatchNode = Node.fromJSON(dispatchNodeJSON)
-const configuration = new Configuration([dispatchNode], 5, 60000, 1000000)
-const rpcProvider = new HttpRpcProvider(new URL(dispatchNode.serviceURL))
-const pocket = new Pocket(configuration, rpcProvider)
+const dispatcherUrl = new URL("http://35.245.90.148:8081")
+const configuration = new Configuration(5, 60000, 1000000)
+const pocket = new Pocket([dispatcherUrl], undefined, configuration)
 
 describe('Ethereum PocketProvider', function () {
     describe("Success scenarios", async () => {
