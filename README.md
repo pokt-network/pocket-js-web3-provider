@@ -64,20 +64,19 @@ const Pocket = lib.Pocket
 const Configuration = lib.Configuration
 const HttpRpcProvider = lib.HttpRpcProvider
 const Node = lib.Node
-const BondStatus = lib.BondStatus
 const PocketProvider = lib.PocketProvider
 
-const node = new Node(
-    nodeAddress, publiKey,
-    jailedStatus, BondStatus.bonded,
-    stakedTokens, serviceURL, chains
-)
+const dispatchers = [new URL("http://node1.testnet.pokt.network:8081"), new URL("http://node2.testnet.pokt.network:8081")];
 
-const configuration = new Configuration([node], 5, 60000, 1000000)
-const rpcProvider = new HttpRpcProvider(new URL(node.serviceURL))
-const pocket = new Pocket(configuration, rpcProvider)
 
-const pocketProvider = new PocketProvider(blockchainHash, pocketAAT, pocket, ethTransactionSigner | undefined)
+const configuration = new Configuration(5, 60000, 1000000)
+const rpcProvider = new HttpRpcProvider(dispatchers)
+const pocket = new Pocket(dispatchers,undefined, configuration, undefined)
+const blockchainHash = "8cf7f8799c5b30d36c86d18f0f4ca041cf1803e0414ed9e9fd3a19ba2f0938ff"
+const pocketAAT = PocketAAT.from("0.0.1", "0x0","0x0","0x0");
+
+
+const pocketProvider = new PocketProvider(blockchainHash, pocketAAT, pocket, <ethTransactionSignerGoesHere> | undefined)
 const web3Ins = new Web3(pocketProvider)
 
 web3Ins.eth.getBalance(clientAccount.addressHex).then(function(response, error){
