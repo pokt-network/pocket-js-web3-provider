@@ -69,9 +69,9 @@ const PocketProvider = lib.PocketProvider
 const dispatchers = [new URL("http://node1.testnet.pokt.network:8081"), new URL("http://node2.testnet.pokt.network:8081")];
 
 
-const configuration = new Configuration(5, 60000, 1000000)
+const configuration = new Configuration(5, 1000, undefined, 40000)
 const rpcProvider = new HttpRpcProvider(dispatchers)
-const pocket = new Pocket(dispatchers,undefined, configuration, undefined)
+const pocket = new Pocket(dispatchers, undefined, configuration, undefined)
 const blockchainHash = "8cf7f8799c5b30d36c86d18f0f4ca041cf1803e0414ed9e9fd3a19ba2f0938ff"
 const pocketAAT = PocketAAT.from("0.0.1", "0x0","0x0","0x0");
 

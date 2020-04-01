@@ -51,7 +51,7 @@ const ethTransactionSigner = new TransactionSigner(ethTxSigner.accounts, ethTxSi
 const blockchain = "8cf7f8799c5b30d36c86d18f0f4ca041cf1803e0414ed9e9fd3a19ba2f0938ff"
 // Pocket instance requirements
 const dispatchURL = new URL("http://node9.testnet.pokt.network:8081")
-const configuration = new Configuration(5, 60000, 1000000, 1000)
+const configuration = new Configuration(5, 1000, undefined, 1000000)
 const rpcProvider = new HttpRpcProvider(dispatchURL)
 const pocket = new Pocket([dispatchURL], configuration, rpcProvider)
 
