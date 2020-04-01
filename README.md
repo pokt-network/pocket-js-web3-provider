@@ -73,15 +73,16 @@ const configuration = new Configuration(5, 1000, undefined, 40000)
 const rpcProvider = new HttpRpcProvider(dispatchers)
 const pocket = new Pocket(dispatchers, undefined, configuration, undefined)
 const blockchainHash = "8cf7f8799c5b30d36c86d18f0f4ca041cf1803e0414ed9e9fd3a19ba2f0938ff"
-const pocketAAT = PocketAAT.from("0.0.1", "0x0","0x0","0x0");
+PocketAAT.from("0.0.1", "0x0","0x0","0x0").then(function(pocketAAT){
+  const pocketProvider = new PocketProvider(blockchainHash, pocketAAT, pocket, <ethTransactionSignerGoesHere> | undefined)
+  const web3Ins = new Web3(pocketProvider)
 
-
-const pocketProvider = new PocketProvider(blockchainHash, pocketAAT, pocket, <ethTransactionSignerGoesHere> | undefined)
-const web3Ins = new Web3(pocketProvider)
-
-web3Ins.eth.getBalance(clientAccount.addressHex).then(function(response, error){
-    console.log("Account balance = "+response)
+  web3Ins.eth.getBalance(clientAccount.addressHex).then(function(response, error){
+      console.log("Account balance = "+response)
+  })
 })
+
+
 
 ```
 

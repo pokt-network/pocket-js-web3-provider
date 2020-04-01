@@ -57,10 +57,11 @@ const pocket = new Pocket([dispatchURL], configuration, rpcProvider)
 
 describe('Ethereum PocketProvider', function () {
     describe("Success scenarios", async () => {
-        it('should create a new instance of the PocketProvider', function () {
+        it('should create a new instance of the PocketProvider', async () => {
             expect(function () {
-                const pocketAAT = PocketAAT.from(version, clientPubKey, appPubKeyHex, appPrivKeyHex)
-                const pocketProvider = new PocketProvider(blockchain, pocketAAT, pocket, ethTransactionSigner)
+                PocketAAT.from(version, clientPubKey, appPubKeyHex, appPrivKeyHex).then(function(pocketAAT){
+                    const pocketProvider = new PocketProvider(blockchain, pocketAAT, pocket, ethTransactionSigner)
+                })
             }).to.not.throw(Error)
         })
 
@@ -74,19 +75,18 @@ describe('Ethereum PocketProvider', function () {
                 const error = await pocket.keybase.unlockAccount(clientAccount.addressHex, clientPassphrase, 0)
                 expect(error).to.be.undefined
                 // Generate AAT
-                const aat = PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
-                // Creae Pocket Provider
-                const provider = new PocketProvider(blockchain, aat, pocket, ethTransactionSigner)
+                PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex).then(function(aat){
+                    // Creae Pocket Provider
+                    const provider = new PocketProvider(blockchain, aat, pocket, ethTransactionSigner)
 
-                // Web3
-                const web3Ins = new Web3(provider)
-
-                web3Ins.eth.getBalance(clientAccount.addressHex).then(function(response, error){
-                    console.log("---------------")
-                    console.log(response)
-                    expect(response).to.not.be.undefined.true
-                    expect(response).to.not.be.instanceOf(Error)
+                    // Web3
+                    const web3Ins = new Web3(provider)
+                    web3Ins.eth.getBalance(clientAccount.addressHex).then(function(response, error){
+                        expect(response).to.not.be.undefined.true
+                        expect(response).to.not.be.instanceOf(Error)
+                    })
                 })
+
             } catch (error) {
                 expect(error).to.not.be.instanceOf(Error)
             }
