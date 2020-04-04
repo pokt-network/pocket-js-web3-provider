@@ -1,1 +1,1 @@
-module.exports = Object.assign(module.exports, require('./pocket-provider'), require('./transaction-signer'), require('@pokt-network/pocket-js'));
+module.exports = Object.assign(module.exports, require('./pocket_provider'), require('./transaction_signer'), require('@pokt-network/pocket-js'));
