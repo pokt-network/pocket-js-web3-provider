@@ -1,6 +1,6 @@
 {
   "name": "@pokt-network/web3-provider",
-  "version": "0.0.3-rc",
+  "version": "0.0.4-rc",
   "engines": {
     "node": ">=10.19.0 <=12.15.0",
     "npm": ">= 6.9"
@@ -62,14 +62,14 @@
   },
   "homepage": "https://github.com/pokt-network/pocket-js-web3-provider#readme",
   "dependencies": {
-    "@pokt-network/pocket-js": "0.2.2-rc",
-    "web3-1.x": "npm:web3@1.2.2",
-    "web3-2.x": "npm:web3@^2.0.0-alpha.1",
-    "web3-providers-1.x": "npm:web3-providers@1.0.0-beta.55",
-    "web3-providers-2.x": "npm:web3-providers@^2.0.0-alpha.1",
-    "web3-utils": "^1.2.4"
+    "@pokt-network/pocket-js": "0.2.2-rc"
   },
   "devDependencies": {
+    "web3-1.x": "npm:web3@1.2.2",
+    "web3-2.x": "npm:web3@2.0.0-alpha.1",
+    "web3-providers-1.x": "npm:web3-providers@1.0.0-beta.55",
+    "web3-providers-2.x": "npm:web3-providers@2.0.0-alpha.1",
+    "web3-utils": "1.2.4",
     "chai": "^4.2.0",
     "ethereumjs-tx": "^2.1.2",
     "mocha": "^6.2.2",
