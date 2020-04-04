@@ -17,6 +17,7 @@
     "prepublishOnly": "npm run webpack -- --mode production"
   },
   "files": [
+    "src/*",
     "lib/**/*",
     "dist/**/*"
   ],
