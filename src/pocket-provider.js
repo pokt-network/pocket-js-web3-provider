@@ -71,11 +71,11 @@ class PocketProvider {
       }
       // Result is SendResponse
         if (callback) {
-          callback(null, JSON.parse(result.response))
+          callback(null, JSON.parse(result.payload))
           return
         }
         // return if async
-        return JSON.parse(result.response)
+        return JSON.parse(result.payload)
     } catch (error) {
       this.isConnected = false
       if (callback) {
