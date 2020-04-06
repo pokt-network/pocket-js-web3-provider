@@ -5,7 +5,7 @@ const pocket_core = require('@pokt-network/pocket-js')
 const Pocket = pocket_core.Pocket
 const typeGuard = pocket_core.typeGuard
 const Hex = pocket_core.Hex
-
+const RpcError = pocket_core.RpcError
 /**
  * Pocket Web3 Provider
  *  Sends Relays to the Pocket Network
@@ -22,7 +22,6 @@ class PocketProvider {
     this.pocketAAT = pocketAAT
     this.transactionSigner = transactionSigner
     this.isConnected = true
-
     if (!this.isValid()) {
       throw new Error("Invalid PocketProvider properties.");
     }
@@ -51,7 +50,6 @@ class PocketProvider {
     if (typeGuard(relayData, Error)) {
       throw relayData
     }
-
     try {
       // Send relay to the network
       const result = await this.pocket.sendRelay(
@@ -60,7 +58,7 @@ class PocketProvider {
         this.pocketAAT,
       )
       // Handle the result if is an Error
-      if (typeGuard(result, Error)) {
+      if (typeGuard(result, RpcError)) {
         this.isConnected = false
         // Return error result
         if (callback) {
@@ -79,14 +77,13 @@ class PocketProvider {
     } catch (error) {
       this.isConnected = false
       if (callback) {
-        callback(error)
+        callback(new RpcError.fromError(error))
         return
       }
       // return if async
-      return error
+      return new RpcError.fromError(error)
     }
   }
-
   /**
    * Verifies the Pocket Provider minimum requirements
    * @method isValid
@@ -104,24 +101,22 @@ class PocketProvider {
    * @memberof PocketProvider
    */
   async _getNonce(sender) {
-    const data = JSON.stringify({
+    const data = {
       "id": new Date().getTime(),
       "jsonrpc": "2.0",
       "method": "eth_getTransactionCount",
       "params": [sender, "latest"]
-    })
+    }
     try {
-      const result = await this.send(data)
-
-      if (typeGuard(result, RpcErrorResponse)) {
-        return new Error(result.message)
+      const response = await this.send(data)
+      if (typeGuard(response, RpcError)) {
+        return response
       }
-      return result
+      return response.result
     } catch (error) {
       return error
     }
   }
-
   /**
    * Method to generate the relay data according to the given JSON-RPC payload
    * @method _generateRelayData
@@ -144,7 +139,6 @@ class PocketProvider {
       return payload
     }
   }
-
   /**
    * Method to parse the relay payload
    * @method _parseRelayParams
@@ -155,7 +149,6 @@ class PocketProvider {
   async _parseRelayParams(payload) {
     const txParams = payload.params[0]
     const sender = txParams.from
-
     // Verify address exists in the TransactionSigner
     if (this.transactionSigner === undefined) {
       return new Error(
@@ -167,23 +160,28 @@ class PocketProvider {
     if (hasAddress === false || hasAddress === undefined) {
       return new Error("Address doesn't exist in the provided transactionSigner")
     }
+    let nonce
     // Get the nonce for the sender
-    const nonce = await this._getNonce(sender)
+    if (txParams.nonce) {
+      nonce = txParams.nonce
+    }else {
+      nonce = await this._getNonce(sender)
+    }
+
     // Handle errors
-    if (typeGuard(nonce, RpcErrorResponse)) {
+    if (typeGuard(nonce, RpcError)) {
       return nonce
     }
     // Assign the nonce value to the tx params
     txParams.nonce = nonce
-
     // Signs the transaction with the updated nonce
     const signedTx = await this.transactionSigner.signTransaction(txParams)
-    if (typeGuard(signedTx, RpcErrorResponse)) {
+    if (typeGuard(signedTx, Error)) {
       return signedTx
     }
     // Create relay data object
     const relayData = {
-      "id": new Date().getTime(),
+      "id": payload.id,
       "jsonrpc": "2.0",
       "method": "eth_sendRawTransaction",
       "params": [signedTx]
@@ -191,5 +189,4 @@ class PocketProvider {
     return relayData
   }
 }
-
 module.exports.PocketProvider = PocketProvider
