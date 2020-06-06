@@ -63,7 +63,7 @@
   },
   "homepage": "https://github.com/pokt-network/pocket-js-web3-provider#readme",
   "dependencies": {
-    "@pokt-network/pocket-js": "0.2.2-rc"
+    "@pokt-network/pocket-js": "0.5.2-rc"
   },
   "devDependencies": {
     "web3-1.x": "npm:web3@1.2.6",
