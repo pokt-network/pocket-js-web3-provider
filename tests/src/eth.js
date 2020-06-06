@@ -48,19 +48,19 @@ const ethTxSigner = {
 
 // Relay requirements
 const version = '0.0.1'
-const appPubKeyHex = "73f765cb848f9d40aa9a16a3726f1ec5703f77bad22b2487cd4baaaf777f6e90"
-const appPrivKeyHex = "dfd4ae8742a5d07f1e59fc5b41b5f7d04f026c14ce2c273e0da0e8d2f36df79273f765cb848f9d40aa9a16a3726f1ec5703f77bad22b2487cd4baaaf777f6e90"
+const appPubKeyHex = "a7e8ec112d0c7bcb2521fe783eac704b874a148541f9e9d43bbb9f831503abea"
+const appPrivKeyHex = "cc295ffce930181ed01d38ce2934988c17787bdbfb53e6d6d6bbc3a71e4bf537a7e8ec112d0c7bcb2521fe783eac704b874a148541f9e9d43bbb9f831503abea"
 // Client account
 const clientPubKey = "076cd88affc8e9bc255b2b44d948031b2d9066f5e9ae5b2efba32138e246219e"
 // Transaction Signer
 const ethTransactionSigner = new TransactionSigner(ethTxSigner.accounts, ethTxSigner.privateKeys, ethTxSigner.hasAddress, ethTxSigner.signTransaction)
 // Active blockchain
-const blockchain = "8cf7f8799c5b30d36c86d18f0f4ca041cf1803e0414ed9e9fd3a19ba2f0938ff"
+const blockchain = "0022"
 // Pocket instance requirements
-const dispatchURL = new URL("http://35.245.7.53:8081")
-const configuration = new Configuration(5, 100000, undefined, 1000000)
+const dispatchURL = new URL("http://localhost:8081")
+const configuration = new Configuration()
 const rpcProvider = new HttpRpcProvider(dispatchURL)
-const pocket = new Pocket([dispatchURL], rpcProvider, configuration, )
+const pocket = new Pocket([dispatchURL], rpcProvider, configuration )
 
 describe('Ethereum PocketProvider', function () {
     describe("Success scenarios", async () => {
@@ -88,7 +88,7 @@ describe('Ethereum PocketProvider', function () {
 
                     // Web3
                     const web3Ins = new Web3(provider)
-                    web3Ins.eth.getBalance(clientAccount.addressHex).then(function (response, error) {
+                    web3Ins.eth.getBalance("0x050ea4ab4183E41129B7D72A492DaBf52B27EdB5").then(function (response, error) {
                         expect(response).to.not.be.undefined.true
                         expect(response).to.not.be.instanceOf(Error)
                     })
