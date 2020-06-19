@@ -65,9 +65,9 @@ const pocket = new Pocket([dispatchURL], rpcProvider, configuration )
 describe('Ethereum PocketProvider', function () {
     describe("Success scenarios", async () => {
         it('should create a new instance of the PocketProvider', async () => {
-            expect(function () {
+            expect(async () => {
                 PocketAAT.from(version, clientPubKey, appPubKeyHex, appPrivKeyHex).then(function (pocketAAT) {
-                    const pocketProvider = new PocketProvider(blockchain, pocketAAT, pocket, ethTransactionSigner)
+                    const pocketProvider = new PocketProvider(blockchain, pocketAAT, pocket) 
                 })
             }).to.not.throw(Error)
         })
