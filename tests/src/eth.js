@@ -24,12 +24,12 @@ const env = EnvironmentHelper.getTestNet()
 // Ethereum data setup for test
 const ethTxSigner = {
     // Needs at least 2 accounts in the node to run all tests
-    accounts: ["0x2a14D313F58bA0bd4e8Fa282082D11DA24b1DaA3".toUpperCase(), "0xF0BE394Fb2Def90824D11C7Ea189E75a8e868fA6".toUpperCase()],
+    accounts: ["0x050ea4ab4183E41129B7D72A492DaBf52B27EdB5".toUpperCase(), "0x969338c267133722fa93ce3A6A6e00E161275568".toUpperCase()],
     hasAddress: async function (address) {
         return ethTransactionSigner.accounts.includes(address.toUpperCase())
     },
     // Update this object with the address - private keys for each account in the same order they are declared
-    privateKeys: ["F3D7A8A15A23E2689511A7505D389960D007925119DEC14892466F0EDB0876B8"],
+    privateKeys: ["6b21133d8bf8083b17b51a8345fc252316bcda6d9d537d719c28ab0d561596f2"],
     signTransaction: async function (txParams) {
         try {
             const pkString = ethTransactionSigner.privateKeys[0]
@@ -51,7 +51,7 @@ const version = '0.0.1'
 const appPubKeyHex = "a7e8ec112d0c7bcb2521fe783eac704b874a148541f9e9d43bbb9f831503abea"
 const appPrivKeyHex = "cc295ffce930181ed01d38ce2934988c17787bdbfb53e6d6d6bbc3a71e4bf537a7e8ec112d0c7bcb2521fe783eac704b874a148541f9e9d43bbb9f831503abea"
 // Client account
-const clientPubKey = "076cd88affc8e9bc255b2b44d948031b2d9066f5e9ae5b2efba32138e246219e"
+const clientPubKey = "6220b1e1364c4f120914d80000b63bdac6a58fc3dbb2ff063bcfcb4f8915a49b"
 // Transaction Signer
 const ethTransactionSigner = new TransactionSigner(ethTxSigner.accounts, ethTxSigner.privateKeys, ethTxSigner.hasAddress, ethTxSigner.signTransaction)
 // Active blockchain
