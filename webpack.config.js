@@ -7,13 +7,10 @@ module.exports = {
         rules: [{
             test: /\.script\.js$/,
             use: [{
-                loader: 'script-loader',
-                options: {
-                    sourceMap: true,
-                },
+                loader: 'babel-loader'
             }]
         }, {
-            test: /\.js$/,
+            test: /\.jsx$/,
             use: ["source-map-loader"],
             enforce: "pre"
         }],
@@ -22,9 +19,11 @@ module.exports = {
         extensions: ['.js'],
     },
     output: {
-        filename: 'bundle.js',
+        filename: 'web.js',
         path: path.resolve(__dirname, 'dist'),
-        library: 'webpackLib'
+        library: 'PocketWeb3Provider',
+        libraryTarget: 'umd',
+        umdNamedDefine: true
     },
     mode: "development",
     optimization: {
