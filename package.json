@@ -2,7 +2,7 @@
   "name": "@pokt-network/web3-provider",
   "version": "0.0.6-rc",
   "engines": {
-    "node": ">=10.19.0 <=15",
+    "node": ">=10.19.0",
     "npm": ">= 6.9"
   },
   "description": "Pocket JavaScript Web3 Provider",
